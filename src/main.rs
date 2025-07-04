@@ -1,7 +1,7 @@
 use std::env;
 
 use axum::{Router, routing::get};
-use sqlx::{postgres::PgPoolOptions, Executor};
+use sqlx::{postgres::PgPoolOptions};
 
 async fn homepage() -> &'static str {
     "Welcome to My Rust Website!"
