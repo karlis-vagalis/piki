@@ -1,4 +1,7 @@
+use std::env;
+
 use axum::{Router, routing::get};
+use sqlx::{postgres::PgPoolOptions, Connection};
 
 async fn homepage() -> &'static str {
     "Welcome to My Rust Website!"
@@ -9,6 +12,9 @@ async fn main() {
     let router = Router::new().route("/", get(homepage));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+
+    let pool = PgPoolOptions::new().max_connections(5).connect(&env::var("DATABASE_URL").unwrap()).await;
+    dbg!(&pool);
 
     axum::serve(listener, router).await.unwrap();
 }
