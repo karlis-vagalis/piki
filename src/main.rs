@@ -14,7 +14,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
     let pool = PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(64)
         .connect(&env::var("DATABASE_URL").unwrap())
         .await.unwrap();
 

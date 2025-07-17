@@ -5,4 +5,4 @@
 docker/.tmp
 db/migrations
 
-**/*env*
+**/.env*
