@@ -6,32 +6,26 @@ CREATE TYPE "account_type" AS ENUM (
 );
 
 CREATE TABLE "accounts" (
-	"id" BIGSERIAL NOT NULL UNIQUE,
+	"id" UUID NOT NULL UNIQUE DEFAULT uuidv7(),
 	"name" TEXT NOT NULL UNIQUE,
 	"type" ACCOUNT_TYPE NOT NULL,
-	"created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	"deleted_at" TIMESTAMPTZ,
 	PRIMARY KEY("id")
 );
 
 
-
-
 CREATE TABLE "groups" (
-	"id" BIGSERIAL NOT NULL UNIQUE,
-	"managed_by" BIGINT NOT NULL,
-	"name" TEXT NOT NULL UNIQUE,
-	"display_name" TEXT NOT NULL,
+	"id" UUID NOT NULL UNIQUE DEFAULT uuidv7(),
+	"managed_by" UUID NOT NULL,
+	"name" TEXT NOT NULL,
 	"description" TEXT,
-	"created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	"parent_id" BIGINT,
+	"parent_id" UUID,
 	"left" BIGINT NOT NULL,
 	"right" BIGINT NOT NULL,
 	PRIMARY KEY("id")
 );
-
 
 
 ALTER TABLE "groups"

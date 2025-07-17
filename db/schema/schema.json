@@ -9,8 +9,8 @@
       "fields": [
         {
           "name": "id",
-          "type": "BIGSERIAL",
-          "default": "",
+          "type": "UUID",
+          "default": "uuidv7()",
           "check": "",
           "primary": true,
           "unique": true,
@@ -100,14 +100,14 @@
     {
       "id": "kPomTU1zL4hsCa2GTHQG3",
       "name": "groups",
-      "x": -1228.3506749999992,
-      "y": -723.0237187500001,
+      "x": -1163.928843749999,
+      "y": -944.2458562500001,
       "locked": false,
       "fields": [
         {
           "name": "id",
-          "type": "BIGSERIAL",
-          "default": "",
+          "type": "UUID",
+          "default": "uuidv7()",
           "check": "",
           "primary": true,
           "unique": true,
@@ -121,7 +121,7 @@
         {
           "id": "BPcxWWlso9SSTmcQa1LPu",
           "name": "managed_by",
-          "type": "BIGINT",
+          "type": "UUID",
           "default": "",
           "check": "",
           "primary": false,
@@ -205,7 +205,7 @@
         {
           "id": "Huh08w8E8bT2BD3h4LBeh",
           "name": "parent_id",
-          "type": "BIGINT",
+          "type": "UUID",
           "default": "",
           "check": "",
           "primary": false,
