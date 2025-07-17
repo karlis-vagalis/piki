@@ -3,6 +3,5 @@
 .cargo
 
 docker/.tmp
-db/migrations
 
 **/.env*

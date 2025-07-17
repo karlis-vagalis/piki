@@ -21,14 +21,7 @@ async fn main() {
 
     dbg!(&pool);
     
-    sqlx::query(include_str!(r"../db/queries/init/accounts.sql"))
-        .execute(&pool)
-        .await
-        .unwrap();
-    sqlx::query(include_str!(r"../db/queries/init/groups.sql"))
-        .execute(&pool)
-        .await
-        .unwrap();
+    sqlx::migrate!("db/migrations").run(&pool).await.unwrap();
 
     axum::serve(listener, router).await.unwrap();
 }
