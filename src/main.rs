@@ -1,18 +1,44 @@
-use std::env;
+use std::{env, net::SocketAddr};
 
-use axum::{Router, routing::get};
-use sqlx::postgres::PgPoolOptions;
+use axum::{Router, extract::State, routing::get};
+use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+
+mod models;
+
+use crate::models::Account;
 
 async fn homepage() -> &'static str {
     "Welcome to My Rust Website!"
 }
 
+/*
+async fn get_all_accounts(State(server): State<ServerConfig>) {
+    let rows = sqlx::query_as!(Account, "SELECT id, name, type FROM accounts")
+        .fetch_all(&server.pool)
+        .await
+        .unwrap();
+    dbg!(rows);
+}
+     */
+
+async fn get_all_groups(State(server): State<ServerConfig>) {
+    let rows = sqlx::query!("SELECT * FROM groups")
+        .fetch_all(&server.pool)
+        .await
+        .unwrap();
+    dbg!(rows);
+}
+
+#[derive(Clone)]
+struct ServerConfig {
+    pub host: String,
+    pub port: String,
+
+    pub pool: Pool<Postgres>,
+}
+
 #[tokio::main]
 async fn main() {
-    let router = Router::new().route("/", get(homepage));
-
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-
     let pool = PgPoolOptions::new()
         .max_connections(64)
         .connect(&env::var("DATABASE_URL").unwrap())
@@ -20,8 +46,22 @@ async fn main() {
         .unwrap();
 
     dbg!(&pool);
-    
     sqlx::migrate!("db/migrations").run(&pool).await.unwrap();
 
+    let server_config = ServerConfig {
+        host: "0.0.0.0".to_string(),
+        port: "3000".to_string(),
+        pool,
+    };
+    let addr: SocketAddr = format!("{}:{}", server_config.host, server_config.port)
+        .parse()
+        .unwrap();
+
+    let router = Router::new()
+        .route("/", get(homepage))
+        .route("/api/groups", get(get_all_groups))
+        .with_state(server_config);
+
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, router).await.unwrap();
 }
