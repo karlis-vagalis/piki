@@ -1,6 +1,6 @@
 use std::{env, net::SocketAddr};
 
-use axum::{Json, Router, extract::State, routing::get};
+use axum::{extract::State, routing::{get, post}, Json, Router};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
 mod db;
@@ -9,13 +9,26 @@ async fn homepage() -> &'static str {
     "Welcome to My Rust Website!"
 }
 
-#[axum::debug_handler]
 async fn get_all_accounts(State(server): State<ServerConfig>) -> Json<Vec<db::models::Account>> {
     let rows = sqlx::query_as!(db::models::Account, "SELECT id, name, type AS \"type: db::models::AccountType\", updated_at, deleted_at FROM accounts")
         .fetch_all(&server.pool)
         .await
         .expect("Unable to get accounts!");
     Json(rows)
+}
+
+#[axum::debug_handler]
+async fn create_account(
+    State(server): State<ServerConfig>,
+    Json(body): Json<db::models::CreateAccount>,
+) {
+    let result = sqlx::query("INSERT INTO accounts (name, type) VALUES ($1, $2)")
+        .bind(body.name)
+        .bind(body.r#type)
+        .execute(&server.pool)
+        .await
+        .map_err(|err: sqlx::Error| err.to_string());
+    dbg!(&result);
 }
 
 async fn get_all_groups(State(server): State<ServerConfig>) -> Json<Vec<db::models::Group>> {
@@ -57,6 +70,7 @@ async fn main() {
     let router = Router::new()
         .route("/", get(homepage))
         .route("/api/accounts", get(get_all_accounts))
+        .route("/api/accounts", post(create_account))
         .route("/api/groups", get(get_all_groups))
         .with_state(server_config);
 

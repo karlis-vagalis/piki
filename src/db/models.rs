@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(sqlx::Type, Debug, Serialize)]
+#[derive(sqlx::Type, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[sqlx(rename_all = "lowercase")]
 #[sqlx(type_name = "account_type")]
@@ -18,6 +18,13 @@ pub struct Account {
     pub r#type: AccountType,
     pub updated_at: DateTime<Utc>,
     pub deleted_at: Option<DateTime<Utc>>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub struct CreateAccount {
+    pub name: String,
+    pub r#type: AccountType,
 }
 
 #[derive(Debug, Serialize, sqlx::FromRow)]
