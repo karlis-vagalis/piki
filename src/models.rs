@@ -1,16 +1,21 @@
-use sqlx::types::Uuid;
+use chrono::{DateTime, Utc};
+use serde::Serialize;
+use uuid::Uuid;
 
-#[derive(Debug, sqlx::Type)]
-#[sqlx(type_name = "account_type", rename_all = "lowercase")]
+#[derive(sqlx::Type, Debug, Serialize)]
+#[serde(rename_all = "lowercase")]
+#[sqlx(rename_all = "lowercase")]
+#[sqlx(type_name = "account_type")]
 pub enum AccountType {
     Service,
     Person,
 }
 
-#[derive(Debug, sqlx::FromRow)]
+#[derive(Debug, sqlx::FromRow, Serialize)]
 pub struct Account {
     pub id: Uuid,
     pub name: String,
-    #[sqlx(rename = "type")]
     pub r#type: AccountType,
+    pub updated_at: DateTime<Utc>,
+    pub deleted_at: Option<DateTime<Utc>>,
 }
