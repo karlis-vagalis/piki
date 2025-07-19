@@ -15,6 +15,8 @@ CREATE TABLE "accounts" (
 );
 
 
+
+
 CREATE TABLE "groups" (
 	"id" UUID NOT NULL UNIQUE DEFAULT uuidv7(),
 	"managed_by" UUID NOT NULL,
@@ -22,10 +24,11 @@ CREATE TABLE "groups" (
 	"description" TEXT,
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	"parent_id" UUID,
-	"left" BIGINT NOT NULL,
-	"right" BIGINT NOT NULL,
+	"_lft" BIGINT NOT NULL,
+	"_rgt" BIGINT NOT NULL,
 	PRIMARY KEY("id")
 );
+
 
 
 ALTER TABLE "groups"

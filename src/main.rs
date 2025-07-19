@@ -18,12 +18,12 @@ async fn get_all_accounts(State(server): State<ServerConfig>) -> Json<Vec<db::mo
     Json(rows)
 }
 
-async fn get_all_groups(State(server): State<ServerConfig>) {
-    let rows = sqlx::query!("SELECT * FROM groups")
+async fn get_all_groups(State(server): State<ServerConfig>) -> Json<Vec<db::models::Group>> {
+    let rows = sqlx::query_as!(db::models::Group, "SELECT * FROM groups")
         .fetch_all(&server.pool)
         .await
         .unwrap();
-    dbg!(rows);
+    Json(rows)
 }
 
 #[derive(Clone)]
