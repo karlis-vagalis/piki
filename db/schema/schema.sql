@@ -1,21 +1,11 @@
--- https://www.ackee.agency/blog/hierarchical-models-in-postgresql
-
-CREATE TYPE "account_type" AS ENUM (
-	'service',
-	'person'
-);
-
-CREATE TABLE "accounts" (
+CREATE TABLE "users" (
 	"id" UUID NOT NULL UNIQUE DEFAULT uuidv7(),
-	"name" TEXT NOT NULL UNIQUE,
-	"type" ACCOUNT_TYPE NOT NULL,
+	"email" TEXT NOT NULL UNIQUE,
+	"name" TEXT NOT NULL,
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	"deleted_at" TIMESTAMPTZ,
 	PRIMARY KEY("id")
 );
-
-
-
 
 CREATE TABLE "groups" (
 	"id" UUID NOT NULL UNIQUE DEFAULT uuidv7(),
@@ -29,11 +19,10 @@ CREATE TABLE "groups" (
 	PRIMARY KEY("id")
 );
 
-
-
 ALTER TABLE "groups"
-ADD FOREIGN KEY("managed_by") REFERENCES "accounts"("id")
+ADD FOREIGN KEY("managed_by") REFERENCES "users"("id")
 ON UPDATE NO ACTION ON DELETE NO ACTION;
+
 ALTER TABLE "groups"
 ADD FOREIGN KEY("parent_id") REFERENCES "groups"("id")
 ON UPDATE NO ACTION ON DELETE NO ACTION;
