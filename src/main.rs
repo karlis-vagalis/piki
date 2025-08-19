@@ -3,7 +3,7 @@ use std::{env, net::SocketAddr};
 use axum::{Router, routing::get};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
-use crate::db::{handlers::users::user_routes, models::user};
+use crate::db::handlers::users::user_routes;
 
 mod db;
 

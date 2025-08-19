@@ -4,10 +4,10 @@ use axum::{Json, extract::State};
 
 use crate::ServerConfig;
 
-use crate::db::models::user::CreateUser;
+use crate::db::models::user::{CreateUser, User};
 
 #[axum::debug_handler]
-async fn create_account(State(server): State<ServerConfig>, Json(body): Json<CreateUser>) {
+async fn create_user(State(server): State<ServerConfig>, Json(body): Json<CreateUser>) {
     let result = sqlx::query("INSERT INTO users (name, email) VALUES ($1, $2)")
         .bind(body.name)
         .bind(body.email)
@@ -17,6 +17,16 @@ async fn create_account(State(server): State<ServerConfig>, Json(body): Json<Cre
     dbg!(&result);
 }
 
+async fn get_users(State(server): State<ServerConfig>) -> Json<Vec<User>> {
+    let users = sqlx::query_as!(User, "SELECT * FROM users")
+        .fetch_all(&server.pool)
+        .await
+        .expect("Failed");
+    Json(users)
+}
+
 pub fn user_routes() -> Router<ServerConfig> {
-    Router::new().route("/", post(create_account))
+    Router::new()
+        .route("/", post(create_user))
+        .route("/", get(get_users))
 }
