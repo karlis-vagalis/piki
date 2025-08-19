@@ -3,5 +3,3 @@
 .cargo
 
 docker/.tmp
-
-**/.env*
